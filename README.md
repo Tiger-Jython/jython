@@ -1,6 +1,40 @@
-# Jython: Python for the Java Platform
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.python/jython-standalone/badge.svg)](https://search.maven.org/artifact/org.python/jython-standalone/)
-[![Javadocs](https://www.javadoc.io/badge/org.python/jython-standalone.svg)](https://www.javadoc.io/doc/org.python/jython-standalone)
+# Jython: Python for the Java Platform (TigerJython Edition)
+
+This is the _TigerJython_ version of [Jython](https://github.com/jython/jython)
+that includes some (non-standard) modifications.  In particular, these modifications
+include:
+
+- **Emulation of Python 3 syntax and behaviour:**
+  This emulation of Python 3 behaviour is rather limited and superficial.  This is
+  _not_ Jython 3!  However, TigerJython is an educational environment and our aim
+  is to backport enough of Python 3 so that beginners can start with current syntax
+  until a full Jython 3 version becomes ready.
+  
+  * Internally, strings are mostly unicode—although we did not replace all occurrences
+    of `PyString` by `PyUnicode`.  Hopefully, this will also finally solve the old 
+    issue of running Jython on systems where paths can comprise unicode characters.
+  * Likewise, `long`s are output without the trailing `L` and identify as `int`s.
+  * Some builtin functions are replaced, i.e. `range` is the same as `xrange` in
+    Jython.
+  * While (type) annotations will be supported syntactically, they will be thrown
+    away and are completely ignored by the interpreter.
+  
+- **Added fields and properties:**
+  Sequences have additional properties `.head` and `.tail` to easily access the first
+  element of a sequence or the remainder, respectively.  Additionally, `list`s also
+  support fully writable properties `.first` and `.last` to access (and change) the
+  first or last element of the list, respectively.  `.first` and `.head` are synonyms,
+  of course, except that `.head` is read-only whereas `del mylist.first` will work.
+  
+- **Additional/Modified builtins:**
+  Besides the modifications that are indicated by Python 3-emulation (see above), we
+  also added some builtin functions and types.  Most prominently, `input()` behaves
+  differently in that it is somewhere inbetween Python 2 and Python 3 behaviour: if
+  the entered string is a number, the returned type is an `int` or `float`, 
+  respectively, whereas other strings are returned as `str`.
+
+
+## Original Readme
 
 This is the development repository of Jython,
 the implementation of Python in Java.
