@@ -4,10 +4,7 @@ package org.python.core.io;
 import java.nio.ByteBuffer;
 import java.util.EnumSet;
 
-import org.python.core.Py;
-import org.python.core.PyObject;
-import org.python.core.PyString;
-import org.python.core.PyTuple;
+import org.python.core.*;
 
 /**
  * A Buffered text stream in universal newlines mode.
@@ -312,13 +309,13 @@ public class UniversalIOWrapper extends TextIOBase {
             return Py.None;
         } else if (size == 1) {
             Newline newline = newlineTypes.iterator().next();
-            return new PyString(newline.getValue());
+            return new PyUnicode(newline.getValue());
         }
 
         PyObject[] newlines = new PyObject[size];
         int i = 0;
         for (Newline newline : newlineTypes) {
-            newlines[i++] = new PyString(newline.getValue());
+            newlines[i++] = new PyUnicode(newline.getValue());
         }
         return new PyTuple(newlines);
     }

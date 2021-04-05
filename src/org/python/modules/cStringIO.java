@@ -263,7 +263,7 @@ public class cStringIO {
                 substr = buf.substring(pos, newpos);
                 pos = newpos;
             }
-            return new PyString(substr);
+            return new PyUnicode(substr);
         }
 
         public static final String __doc__readline = "readline() -- Read one line";
@@ -292,7 +292,7 @@ public class cStringIO {
             _convert_to_int(size);
             int len = buf.length();
             if (pos == len) {
-                return new PyString("");
+                return new PyUnicode("");
             }
             int i = buf.indexOf("\n", pos);
             int newpos = (i < 0) ? len : i + 1;
@@ -301,7 +301,7 @@ public class cStringIO {
             }
             String r = buf.substring(pos, newpos);
             pos = newpos;
-            return new PyString(r);
+            return new PyUnicode(r);
         }
 
         /**
@@ -318,7 +318,7 @@ public class cStringIO {
             if (pos  < len) {
                 pos++;
             }
-            return new PyString(r);
+            return new PyUnicode(r);
         }
 
         public static final String __doc__readlines = "readlines() -- Read all lines";
@@ -480,7 +480,7 @@ public class cStringIO {
          */
         public synchronized PyString getvalue() {
             _complain_ifclosed();
-            return new PyString(buf.toString());
+            return new PyUnicode(buf.toString());
         }
 
     }

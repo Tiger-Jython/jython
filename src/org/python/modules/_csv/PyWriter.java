@@ -163,7 +163,7 @@ public class PyWriter extends PyObject implements Traverseproc {
             return false;
         }
 
-        writeline.__call__(new PyString(rec.toString()));
+        writeline.__call__(new PyUnicode(rec.toString()));
         return true;
     }
 

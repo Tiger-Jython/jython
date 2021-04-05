@@ -6,6 +6,7 @@ import java.util.List;
 import org.python.core.Py;
 import org.python.core.PyObject;
 import org.python.core.PyString;
+import org.python.core.PyUnicode;
 
 public class IdentifierAdapter implements AstAdapter {
 
@@ -20,7 +21,7 @@ public class IdentifierAdapter implements AstAdapter {
         if (o == null) {
             return Py.None;
         }
-        return new PyString(o.toString());
+        return new PyUnicode(o.toString());
     }
 
     public List iter2ast(PyObject iter) {

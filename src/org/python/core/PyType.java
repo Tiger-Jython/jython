@@ -656,6 +656,16 @@ public class PyType extends PyObject implements Serializable, Traverseproc {
             if (objType == psmType) {
                 return PyDictionary.TYPE;
             }
+            // CHANGED BY Tobias Kohn
+            // special cases for Python 3 transition
+            if (obj instanceof PyUnicode) {
+                return PyString.TYPE;
+            }
+            if (obj instanceof PyLong) {
+                return PyInteger.TYPE;
+            }
+
+
             return objType;
         }
         /*
@@ -697,7 +707,7 @@ public class PyType extends PyObject implements Serializable, Traverseproc {
             PyObject winnerNew = winner.lookup("__new__");
             if (winnerNew != null && winnerNew != new_) {
                 return invokeNew(winnerNew, winner, false,
-                        new PyObject[] {new PyString(name), bases, dict}, Py.NoKeywords);
+                        new PyObject[] {new PyUnicode(name), bases, dict}, Py.NoKeywords);
             }
             metatype = winner;
         }
@@ -1185,7 +1195,7 @@ public class PyType extends PyObject implements Serializable, Traverseproc {
                 PyObject docObj;
                 if (doc != null) {
                     // Not PyString(doc) as PyString.TYPE may be null during bootstrapping.
-                    docObj = new PyString(Constant.PYSTRING, doc);
+                    docObj = new PyUnicode(Constant.PYSTRING, doc);
                 } else {
                     // Not Py.None to avoid load & init of Py module and all its constants.
                     docObj = PyNone.getInstance();
@@ -2524,9 +2534,9 @@ public class PyType extends PyObject implements Serializable, Traverseproc {
         }
         int lastDot = name.lastIndexOf('.');
         if (lastDot != -1) {
-            return new PyString(name.substring(0, lastDot));
+            return new PyUnicode(name.substring(0, lastDot));
         }
-        return new PyString("__builtin__");
+        return new PyUnicode("__builtin__");
     }
 
     @ExposedDelete(name = "__module__")

@@ -6,22 +6,7 @@ import java.io.StringReader;
 import java.util.Properties;
 
 import org.python.antlr.base.mod;
-import org.python.core.CodeFlag;
-import org.python.core.CompileMode;
-import org.python.core.CompilerFlags;
-import org.python.core.Options;
-import org.python.core.ParserFacade;
-import org.python.core.Py;
-import org.python.core.PyCode;
-import org.python.core.PyException;
-import org.python.core.PyFile;
-import org.python.core.PyFileReader;
-import org.python.core.PyFileWriter;
-import org.python.core.PyModule;
-import org.python.core.PyObject;
-import org.python.core.PyString;
-import org.python.core.PySystemState;
-import org.python.core.__builtin__;
+import org.python.core.*;
 
 /**
  * The PythonInterpreter class is a standard wrapper for a Jython interpreter for embedding in a
@@ -244,7 +229,7 @@ public class PythonInterpreter implements AutoCloseable, Closeable {
      */
     public PyObject eval(String s) {
         setSystemState();
-        return __builtin__.eval(new PyString(s), getLocals());
+        return __builtin__.eval(new PyUnicode(s), getLocals());
     }
 
     /**

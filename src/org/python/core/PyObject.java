@@ -228,7 +228,7 @@ public class PyObject implements Serializable {
      */
     @ExposedMethod(names = "__str__", doc = BuiltinDocs.object___str___doc)
     public PyString __repr__() {
-        return new PyString(toString());
+        return new PyUnicode(toString());
     }
 
     @Override

@@ -1999,8 +1999,8 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
     }
 
     @ExposedMethod(names = {"__repr__"}, doc = BuiltinDocs.bytearray___repr___doc)
-    final synchronized PyString bytearray___repr__() {
-        return new PyString(basebytes_repr("bytearray(b", ")"));
+    final synchronized PyUnicode bytearray___repr__() {
+        return new PyUnicode(basebytes_repr("bytearray(b", ")"));
     }
 
     /**
@@ -2014,8 +2014,8 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
     }
 
     @ExposedMethod(names = {"__str__"}, doc = BuiltinDocs.bytearray___str___doc)
-    final PyString bytearray_str() {
-        return new PyString(this.asString());
+    final PyUnicode bytearray_str() {
+        return new PyUnicode(this.asString());
     }
 
     /**
@@ -2588,7 +2588,7 @@ public class PyByteArray extends BaseBytes implements BufferProtocol {
      *
      * @param a index of hole in byte array
      * @param d number to discard (will discard x[a,a+d-1])
-     * @param e size of hole to open (will be x[a, a+e-1])
+     *  param e size of hole to open (will be x[a, a+e-1])
      */
     private void storageDelete(int a, int d) {
         // storageReplace specialised for delete (e=0)

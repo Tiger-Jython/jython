@@ -41,7 +41,7 @@ public class PyJavaPackage extends PyObject implements Traverseproc {
         clsSet = new PyStringMap();
 
         __dict__ = new PyStringMap();
-        __dict__.__setitem__("__name__", new PyString(__name__));
+        __dict__.__setitem__("__name__", new PyUnicode(__name__));
     }
 
     public PyJavaPackage addPackage(String name) {
@@ -137,13 +137,13 @@ public class PyJavaPackage extends PyObject implements Traverseproc {
             Class<?> c = __mgr__.findClass(__name__, name);
             if (c != null) {
                 return addClass(name, c);
-            } else if (name == "__name__") {
-                return new PyString(__name__);
-            } else if (name == "__dict__") {
+            } else if (name.equals("__name__")) {
+                return new PyUnicode(__name__);
+            } else if (name.equals("__dict__")) {
                 return __dict__;
-            } else if (name == "__mgr__") {
+            } else if (name.equals("__mgr__")) {
                 return Py.java2py(__mgr__);
-            } else if (name == "__file__") {
+            } else if (name.equals("__file__")) {
                 // Stored as UTF-16 for Java but expected as bytes in Python
                 return __file__ == null ? Py.None : Py.fileSystemEncode(__file__);
             } else {
@@ -154,13 +154,13 @@ public class PyJavaPackage extends PyObject implements Traverseproc {
 
     @Override
     public void __setattr__(String attr, PyObject value) {
-        if (attr == "__mgr__") {
+        if (attr.equals("__mgr__")) {
             PackageManager newMgr = Py.tojava(value, PackageManager.class);
             if (newMgr == null) {
                 throw Py.TypeError("cannot set java package __mgr__ to None");
             }
             __mgr__ = newMgr;
-        } else if (attr == "__file__") {
+        } else if (attr.equals("__file__")) {
             // Stored as UTF-16 for Java but presented as bytes from Python
             __file__ = Py.fileSystemDecode(value);
         } else {

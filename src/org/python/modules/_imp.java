@@ -8,16 +8,7 @@ import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.python.core.Py;
-import org.python.core.PyFile;
-import org.python.core.PyList;
-import org.python.core.PyModule;
-import org.python.core.PyObject;
-import org.python.core.PyString;
-import org.python.core.PySystemState;
-import org.python.core.PyTuple;
-import org.python.core.__builtin__;
-import org.python.core.imp;
+import org.python.core.*;
 
 /*
  * A bogus implementation of the CPython builtin module "imp".
@@ -27,7 +18,7 @@ import org.python.core.imp;
  */
 
 public class _imp {
-    public static PyString __doc__ = new PyString(
+    public static PyString __doc__ = new PyUnicode(
         "This module provides the components needed to build your own\n"+
         "__import__ function.  Undocumented functions are obsolete.\n"
     );

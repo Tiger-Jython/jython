@@ -337,7 +337,7 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
     @ExposedMethod(defaults = {"-1"}, doc = BuiltinDocs.file_read_doc)
     final synchronized PyString file_read(int size) {
         checkClosed();
-        return new PyString(file.read(size));
+        return new PyUnicode(file.read(size));
     }
 
     public PyString read(int size) {
@@ -361,7 +361,7 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
     @ExposedMethod(defaults = {"-1"}, doc = BuiltinDocs.file_readline_doc)
     final synchronized PyString file_readline(int max) {
         checkClosed();
-        return new PyString(file.readline(max));
+        return new PyUnicode(file.readline(max));
     }
 
     public PyString readline(int max) {
@@ -409,7 +409,7 @@ public class PyFile extends PyObject implements FinalizableBuiltin, Traverseproc
         if (next.length() == 0) {
             return null;
         }
-        return new PyString(next);
+        return new PyUnicode(next);
     }
 
     @ExposedMethod(doc = BuiltinDocs.file_next_doc)

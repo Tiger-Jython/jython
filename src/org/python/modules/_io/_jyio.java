@@ -1,16 +1,7 @@
 /* Copyright (c)2012 Jython Developers */
 package org.python.modules._io;
 
-import org.python.core.ArgParser;
-import org.python.core.ClassDictInit;
-import org.python.core.Py;
-import org.python.core.PyException;
-import org.python.core.PyInteger;
-import org.python.core.PyObject;
-import org.python.core.PyString;
-import org.python.core.PyStringMap;
-import org.python.core.PyType;
-import org.python.core.imp;
+import org.python.core.*;
 import org.python.core.io.IOBase;
 
 /**
@@ -27,7 +18,7 @@ public class _jyio implements ClassDictInit {
      */
     public static void classDictInit(PyObject dict) {
         dict.__setitem__("__name__", new PyString("_jyio"));
-        dict.__setitem__("__doc__", new PyString(__doc__));
+        dict.__setitem__("__doc__", new PyUnicode(__doc__));
         dict.__setitem__("DEFAULT_BUFFER_SIZE", DEFAULT_BUFFER_SIZE);
 
         dict.__setitem__("_IOBase", PyIOBase.TYPE);
@@ -200,7 +191,7 @@ public class _jyio implements ClassDictInit {
                         {buffer, ap.getPyObject(3, Py.None), ap.getPyObject(4, Py.None),
                                 ap.getPyObject(5, Py.None), Py.newBoolean(line_buffering)};
                 PyObject wrapper = textType.__call__(textArgs);
-                wrapper.__setattr__("mode", new PyString(m));
+                wrapper.__setattr__("mode", new PyUnicode(m));
                 return wrapper;
             }
         }

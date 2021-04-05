@@ -1012,7 +1012,7 @@ public class PyLong extends PyObject {
     private PyString formatImpl(Spec spec) {
         // Traditional formatter (%-format) because #o means "-0123" not "-0o123".
         IntegerFormatter f = new IntegerFormatter.Traditional(spec);
-        f.format(value).append('L');
+        // f.format(value).append('L');  // CHANGED BY Tobias Kohn
         return new PyString(f.getResult());
     }
 

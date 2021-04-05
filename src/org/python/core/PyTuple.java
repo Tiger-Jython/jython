@@ -9,10 +9,7 @@ import java.util.ListIterator;
 
 import java.lang.reflect.Array;
 
-import org.python.expose.ExposedMethod;
-import org.python.expose.ExposedNew;
-import org.python.expose.ExposedType;
-import org.python.expose.MethodType;
+import org.python.expose.*;
 
 /**
  * A builtin python tuple.
@@ -261,6 +258,20 @@ public class PyTuple extends PySequenceList {
             throw Py.IndexError("index out of range: " + index);
         }
         return ret;
+    }
+
+    @ExposedGet(name = "head")
+    public synchronized PyObject seq__get_head() {
+        PyObject ret = seq___finditem__(0);
+        if (ret == null) {
+            throw Py.IndexError("index out of range");
+        }
+        return ret;
+    }
+
+    @ExposedGet(name = "tail")
+    public synchronized PyObject seq__get_tail() {
+        return seq___getslice__(Py.One, null, null);
     }
 
     @ExposedMethod(doc = BuiltinDocs.tuple___getnewargs___doc)

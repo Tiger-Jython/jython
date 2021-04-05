@@ -3,10 +3,7 @@
 
 package org.python.modules._locale;
 
-import org.python.core.Py;
-import org.python.core.PyDictionary;
-import org.python.core.PyList;
-import org.python.core.PyString;
+import org.python.core.*;
 
 /**
  * Emulates the Python (ie POSIX) 'C' locale.
@@ -42,11 +39,11 @@ public class CEmulationLocale implements PyLocale {
     private static final PyDictionary EMULATION_CONV;
 
     private static void putEmpty(PyDictionary dict, String key) {
-        dict.put(new PyString(key), Py.EmptyString);
+        dict.put(new PyUnicode(key), Py.EmptyString);
     }
 
     private static void putCharMax(PyDictionary dict, String key) {
-        dict.put(new PyString(key), _locale.CHAR_MAX_PY_INT);
+        dict.put(new PyUnicode(key), _locale.CHAR_MAX_PY_INT);
     }
 
     static {

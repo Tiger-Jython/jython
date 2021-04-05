@@ -167,7 +167,7 @@ public class PosixModule implements ClassDictInit {
         }
         dict.__setitem__("__all__", keys);
 
-        dict.__setitem__("__name__", new PyString(os.getModuleName()));
+        dict.__setitem__("__name__", new PyUnicode(os.getModuleName()));
         dict.__setitem__("__doc__", __doc__);
     }
 
@@ -533,7 +533,7 @@ public class PosixModule implements ClassDictInit {
             throw Py.OSError(
                     "getlogin OS call failed. Preferentially use os.getenv('LOGNAME') instead.");
         }
-        return new PyString(login);
+        return new PyUnicode(login);
     }
 
     public static PyString __doc__getppid = new PyString(
@@ -833,7 +833,7 @@ public class PosixModule implements ClassDictInit {
         // XXX: Consider deprecating putenv/unsetenv
         // import os; os.environ[key] = value
         PyObject environ = imp.load("os").__getattr__("environ");
-        environ.__setitem__(key, new PyString(value));
+        environ.__setitem__(key, new PyUnicode(value));
     }
 
     public static PyString __doc__read = new PyString(
@@ -884,7 +884,7 @@ public class PosixModule implements ClassDictInit {
         "Rename a file or directory.");
     public static void rename(PyObject oldpath, PyObject newpath) {
         if (!(absolutePath(oldpath).toFile().renameTo(absolutePath(newpath).toFile()))) {
-            PyObject args = new PyTuple(Py.Zero, new PyString("Couldn't rename file"));
+            PyObject args = new PyTuple(Py.Zero, new PyUnicode("Couldn't rename file"));
             throw new PyException(Py.OSError, args);
         }
     }
@@ -899,7 +899,7 @@ public class PosixModule implements ClassDictInit {
         } else if (!file.isDirectory()) {
             throw Py.OSError(Errno.ENOTDIR, path);
         } else if (!file.delete()) {
-            PyObject args = new PyTuple(Py.Zero, new PyString("Couldn't delete directory"),
+            PyObject args = new PyTuple(Py.Zero, new PyUnicode("Couldn't delete directory"),
                                         path);
             throw new PyException(Py.OSError, args);
         }
@@ -1266,7 +1266,7 @@ public class PosixModule implements ClassDictInit {
         for (String[] command : commands) {
             PyList args = new PyList();
             for (String arg : command) {
-                args.append(new PyString(arg));
+                args.append(new PyUnicode(arg));
             }
             commandsTup[i++] = args;
         }

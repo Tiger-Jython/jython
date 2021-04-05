@@ -737,7 +737,7 @@ public class imp {
         for (PyObject importer : metaPath.asIterable()) {
             PyObject findModule = importer.__getattr__("find_module");
             loader = findModule.__call__(new PyObject[] { //
-                    new PyString(moduleName), path == null ? Py.None : path});
+                    new PyUnicode(moduleName), path == null ? Py.None : path});
             if (loader != Py.None) {
                 return loadFromLoader(loader, moduleName);
             }
@@ -758,7 +758,7 @@ public class imp {
             if (importer != Py.None) {
                 // A specific importer is defined. Try its finder method.
                 PyObject findModule = importer.__getattr__("find_module");
-                loader = findModule.__call__(new PyObject[] {new PyString(moduleName)});
+                loader = findModule.__call__(new PyObject[] {new PyUnicode(moduleName)});
                 if (loader != Py.None) {
                     return loadFromLoader(loader, moduleName);
                 }
@@ -816,7 +816,7 @@ public class imp {
         ReentrantLock importLock = Py.getSystemState().getImportLock();
         importLock.lock();
         try {
-            return load_module.__call__(new PyObject[] {new PyString(name)});
+            return load_module.__call__(new PyObject[] {new PyUnicode(name)});
         } finally {
             importLock.unlock();
         }
@@ -1067,7 +1067,7 @@ public class imp {
             tmp = dict.__finditem__("__path__");
             if (tmp instanceof PyList) {
                 // __path__ is set, so modname is already the package name.
-                dict.__setitem__("__package__", new PyString(modname));
+                dict.__setitem__("__package__", new PyUnicode(modname));
             } else {
                 // __name__ is not a package name, try one level upwards.
                 int dot = modname.lastIndexOf('.');
@@ -1081,7 +1081,7 @@ public class imp {
                 }
                 // modname should be the package name.
                 modname = modname.substring(0, dot);
-                dict.__setitem__("__package__", new PyString(modname));
+                dict.__setitem__("__package__", new PyUnicode(modname));
             }
         }
 
@@ -1747,7 +1747,7 @@ public class imp {
             name = name.substring(dot + 1, name.length()).intern();
         }
 
-        nm.__setattr__("__name__", new PyString(modName)); // FIXME necessary?!
+        nm.__setattr__("__name__", new PyUnicode(modName)); // FIXME necessary?!
         try {
             PyObject ret = find_module(name, modName, path);
             modules.__setitem__(modName, ret);

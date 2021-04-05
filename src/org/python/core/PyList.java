@@ -4,10 +4,7 @@ package org.python.core;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.python.expose.ExposedMethod;
-import org.python.expose.ExposedNew;
-import org.python.expose.ExposedType;
-import org.python.expose.MethodType;
+import org.python.expose.*;
 import org.python.util.Generic;
 
 import java.util.Collection;
@@ -449,6 +446,68 @@ public class PyList extends PySequenceList {
             throw Py.IndexError("index out of range: " + o);
         }
         return ret;
+    }
+
+    @ExposedGet(name = "head")
+    public synchronized PyObject seq__get_head() {
+        PyObject ret = seq___finditem__(0);
+        if (ret == null) {
+            throw Py.IndexError("index out of range");
+        }
+        return ret;
+    }
+
+    @ExposedGet(name = "tail")
+    public synchronized PyObject seq__get_tail() {
+        return seq___getslice__(Py.One, null, null);
+    }
+
+    @ExposedGet(name = "first")
+    final synchronized PyObject list__get_first() {
+        if (size() == 0) {
+            throw Py.IndexError("index out of range");
+        }
+        return seq___finditem__(0);
+    }
+
+    @ExposedSet(name = "first")
+    final synchronized void list__set_first(PyObject o) {
+        if (size() == 0) {
+            throw Py.IndexError("index out of range");
+        }
+        list___setitem__(Py.Zero, o);
+    }
+
+    @ExposedDelete(name= "first")
+    final synchronized void list__del_first() {
+        if (size() == 0) {
+            throw Py.IndexError("index out of range");
+        }
+        list___delitem__(Py.Zero);
+    }
+
+    @ExposedGet(name = "last")
+    final synchronized PyObject list__get_last() {
+        if (size() == 0) {
+            throw Py.IndexError("index out of range");
+        }
+        return seq___finditem__(-1);
+    }
+
+    @ExposedSet(name = "last")
+    final synchronized void list__set_last(PyObject o) {
+        if (size() == 0) {
+            throw Py.IndexError("index out of range");
+        }
+        list___setitem__(Py.MinusOne, o);
+    }
+
+    @ExposedDelete(name= "last")
+    final synchronized void list__del_last() {
+        if (size() == 0) {
+            throw Py.IndexError("index out of range");
+        }
+        list___delitem__(Py.MinusOne);
     }
 
     @Override

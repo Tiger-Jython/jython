@@ -77,6 +77,8 @@ public final class Py extends PrePy {
     public final static PyInteger Zero = new PyInteger(0);
     /** The Python integer 1 **/
     public final static PyInteger One = new PyInteger(1);
+    /** The Python integer -11 **/
+    public final static PyInteger MinusOne = new PyInteger(-1);
     /** The Python boolean False **/
     public final static PyBoolean False = new PyBoolean(false);
     /** The Python boolean True **/
@@ -2347,6 +2349,14 @@ public final class Py extends PrePy {
     public static boolean isInstance(PyObject inst, PyObject cls) {
         // Quick test for an exact match
         if (inst.getType() == cls) {
+            return true;
+        }
+        // CHANGED BY Tobias Kohn:
+        // These are special cases that occur because of the transition to Python-3 syntax
+        if (inst.getType() == PyUnicode.TYPE && cls == PyString.TYPE) {
+            return true;
+        }
+        if (inst.getType() == PyLong.TYPE && cls == PyInteger.TYPE) {
             return true;
         }
 

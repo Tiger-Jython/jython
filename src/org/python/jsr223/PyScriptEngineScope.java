@@ -7,15 +7,8 @@ import java.util.Map;
 import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
-import org.python.core.Py;
-import org.python.core.PyDictionary;
-import org.python.core.PyIterator;
-import org.python.core.PyList;
-import org.python.core.PyObject;
-import org.python.core.PyString;
-import org.python.core.PyType;
-import org.python.core.Visitproc;
-import org.python.core.Untraversable;
+
+import org.python.core.*;
 import org.python.expose.ExposedType;
 import org.python.expose.ExposedGet;
 import org.python.expose.ExposedMethod;
@@ -58,7 +51,7 @@ public final class PyScriptEngineScope extends PyObject {
             if (bindings == null)
                 continue;
             for (String key : bindings.keySet())
-                members.append(new PyString(key));
+                members.append(new PyUnicode(key));
         }
         members.sort();
         return members;

@@ -34,7 +34,7 @@ public class PyModule extends PyObject implements Traverseproc {
 
     public PyModule(PyType subType, String name) {
         super(subType);
-        module___init__(new PyString(name), Py.None);
+        module___init__(new PyUnicode(name), Py.None);
     }
 
     public PyModule(String name) {
@@ -44,7 +44,7 @@ public class PyModule extends PyObject implements Traverseproc {
     public PyModule(String name, PyObject dict) {
         super();
         __dict__ = dict;
-        module___init__(new PyString(name), Py.None);
+        module___init__(new PyUnicode(name), Py.None);
     }
 
     @ExposedNew
@@ -219,7 +219,7 @@ public class PyModule extends PyObject implements Traverseproc {
 
     @ExposedMethod
     final void module___setattr__(String name, PyObject value) {
-        if (name != "__dict__") {
+        if (!name.equals("__dict__")) {
             ensureDict();
         }
         super.__setattr__(name, value);

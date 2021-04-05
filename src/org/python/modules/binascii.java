@@ -100,7 +100,7 @@ public class binascii {
 
     public static PyObject exceptionNamespace() {
         PyObject dict = new PyStringMap();
-        dict.__setitem__("__module__", new PyString("binascii"));
+        dict.__setitem__("__module__", new PyUnicode("binascii"));
         return dict;
     }
 

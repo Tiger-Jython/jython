@@ -104,8 +104,8 @@ informix.jar = ../support/jdbc-4.10.12.jar
              tag. Until then sys.version will have a snapshot suffix (-DEV or -SNAPSHOT). You can
              specify that suffix by -Dsnapshot.name on the ant command line. -->
         <property name="jython.major_version" value="2"/>
-        <property name="jython.minor_version" value="7"/>
-        <property name="jython.micro_version" value="3"/>
+        <property name="jython.minor_version" value="9"/>
+        <property name="jython.micro_version" value="0"/>
         <property name="jython.release_level" value="${PY_RELEASE_LEVEL_ALPHA}"/>
 
         <!-- Zero at full release: one-up number for alpha, beta and candidate versions. -->

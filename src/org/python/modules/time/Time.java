@@ -18,16 +18,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
-import org.python.core.ClassDictInit;
-import org.python.core.Py;
-import org.python.core.PyBuiltinFunctionSet;
-import org.python.core.PyException;
-import org.python.core.PyInteger;
-import org.python.core.PyObject;
-import org.python.core.PyString;
-import org.python.core.PyTuple;
-import org.python.core.Untraversable;
-import org.python.core.__builtin__;
+import org.python.core.*;
 import org.python.modules._locale.DateSymbolLocale;
 import org.python.modules._locale._locale;
 
@@ -122,8 +113,8 @@ public class Time implements ClassDictInit
         // calculate the static variables tzname, timezone, altzone, daylight
         TimeZone tz = TimeZone.getDefault();
 
-        tzname = new PyTuple(new PyString(tz.getDisplayName(false, 0)),
-                             new PyString(tz.getDisplayName(true, 0)));
+        tzname = new PyTuple(new PyUnicode(tz.getDisplayName(false, 0)),
+                             new PyUnicode(tz.getDisplayName(true, 0)));
 
         daylight = tz.useDaylightTime() ? 1 : 0;
         timezone = -tz.getRawOffset() / 1000;
@@ -154,7 +145,7 @@ public class Time implements ClassDictInit
     private static volatile boolean clockInitialized;
 
     private static void throwValueError(String msg) {
-        throw new PyException(Py.ValueError, new PyString(msg));
+        throw new PyException(Py.ValueError, new PyUnicode(msg));
     }
 
     private static int item(PyTuple tup, int i) {
@@ -371,7 +362,7 @@ public class Time implements ClassDictInit
         try {
             return shortdays[dow];
         } catch (ArrayIndexOutOfBoundsException e) {
-            throw new PyException(Py.ValueError, new PyString("day of week out of range (0-6)"));
+            throw new PyException(Py.ValueError, new PyUnicode("day of week out of range (0-6)"));
         }
     }
 
@@ -388,7 +379,7 @@ public class Time implements ClassDictInit
         try {
             return shortmonths[month0to11];
         } catch (ArrayIndexOutOfBoundsException e) {
-            throw new PyException(Py.ValueError, new PyString("month out of range (1-12)"));
+            throw new PyException(Py.ValueError, new PyUnicode("month out of range (1-12)"));
         }
     }
 
@@ -446,7 +437,7 @@ public class Time implements ClassDictInit
         buf.append(_twodigit(item(tup, 3))).append(':');
         buf.append(_twodigit(item(tup, 4))).append(':');
         buf.append(_twodigit(item(tup, 5))).append(' ');
-        return new PyString(buf.append(item(tup, 0)).toString());
+        return new PyUnicode(buf.append(item(tup, 0)).toString());
     }
 
     public static String locale_asctime(PyTuple tup) {

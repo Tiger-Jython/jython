@@ -10,10 +10,7 @@ import java.util.Set;
 
 import org.python.core.stringlib.FieldNameIterator;
 import org.python.core.stringlib.MarkupIterator;
-import org.python.expose.ExposedMethod;
-import org.python.expose.ExposedNew;
-import org.python.expose.ExposedType;
-import org.python.expose.MethodType;
+import org.python.expose.*;
 import org.python.modules._codecs;
 import org.python.util.Generic;
 
@@ -678,7 +675,7 @@ public class PyUnicode extends PyString implements Iterable<Integer> {
 
     @ExposedMethod(doc = BuiltinDocs.unicode___str___doc)
     final PyString unicode___str__() {
-        return new PyString(encode());
+        return this;
     }
 
     @Override
@@ -698,7 +695,7 @@ public class PyUnicode extends PyString implements Iterable<Integer> {
 
     @ExposedMethod(doc = BuiltinDocs.unicode___repr___doc)
     final PyString unicode___repr__() {
-        return new PyString("u" + encode_UnicodeEscape(getString(), true));
+        return new PyUnicode(encode_UnicodeEscape(getString(), true));
     }
 
     @ExposedMethod(doc = BuiltinDocs.unicode___getitem___doc)
@@ -709,6 +706,20 @@ public class PyUnicode extends PyString implements Iterable<Integer> {
     @ExposedMethod(defaults = "null", doc = BuiltinDocs.unicode___getslice___doc)
     final PyObject unicode___getslice__(PyObject start, PyObject stop, PyObject step) {
         return seq___getslice__(start, stop, step);
+    }
+
+    @ExposedGet(name = "head")
+    public synchronized PyObject seq__get_head() {
+        PyObject ret = seq___finditem__(0);
+        if (ret == null) {
+            throw Py.IndexError("string index out of range");
+        }
+        return ret;
+    }
+
+    @ExposedGet(name = "tail")
+    public synchronized PyObject seq__get_tail() {
+        return seq___getslice__(Py.One, null, null);
     }
 
     @Override
@@ -1040,7 +1051,17 @@ public class PyUnicode extends PyString implements Iterable<Integer> {
         if (o instanceof PyUnicode) {
             return ((PyUnicode) o).getString();
         } else if (o instanceof PyString) {
-            return ((PyString) o).decode().toString();
+            String s = ((PyString)o).string;
+            boolean is_ascii = true;
+            for (int i = 0; i < s.length(); i++)
+                if (s.charAt(i) >= 0x80) {
+                    is_ascii = false;
+                    break;
+                }
+            if (is_ascii)
+                return s;
+            else
+                return ((PyString) o).decode().toString();
         } else if (o instanceof Py2kBuffer) {
             // We ought to be able to call codecs.decode on o but see Issue #2164
             try (PyBuffer buf = ((BufferProtocol) o).getBuffer(PyBUF.FULL_RO)) {

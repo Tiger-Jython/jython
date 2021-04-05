@@ -22,10 +22,7 @@ import org.python.core.stringlib.InternalFormat.Spec;
 import org.python.core.stringlib.MarkupIterator;
 import org.python.core.stringlib.TextFormatter;
 import org.python.core.util.StringUtil;
-import org.python.expose.ExposedMethod;
-import org.python.expose.ExposedNew;
-import org.python.expose.ExposedType;
-import org.python.expose.MethodType;
+import org.python.expose.*;
 
 /**
  * A builtin python string.
@@ -172,7 +169,8 @@ public class PyString extends PyBaseString implements BufferProtocol {
             S = S.__str__();
             if (S instanceof PyUnicode) {
                 // Encoding will raise UnicodeEncodeError if not 7-bit clean.
-                str = codecs.encode((PyUnicode) S, null, null);
+                // str = codecs.encode((PyUnicode) S, null, null);
+                return (PyUnicode)S;
             } else {
                 // Must be str/bytes, and should be 8-bit clean already.
                 str = S.toString();
@@ -623,6 +621,20 @@ public class PyString extends PyBaseString implements BufferProtocol {
         return seq___getslice__(start, stop, step);
     }
 
+    @ExposedGet(name = "head")
+    public synchronized PyObject seq__get_head() {
+        PyObject ret = seq___finditem__(0);
+        if (ret == null) {
+            throw Py.IndexError("string index out of range");
+        }
+        return ret;
+    }
+
+    @ExposedGet(name = "tail")
+    public synchronized PyObject seq__get_tail() {
+        return seq___getslice__(Py.One, null, null);
+    }
+
     @Override
     public int __cmp__(PyObject other) {
         return str___cmp__(other);
@@ -853,9 +865,10 @@ public class PyString extends PyBaseString implements BufferProtocol {
      */
     private static String asU16BytesOrNull(PyObject obj) {
         if (obj instanceof PyString) {
-            if (obj instanceof PyUnicode) {
+            // CHANGED BY Tobias Kohn
+            /*if (obj instanceof PyUnicode) {
                 return null;
-            }
+            }*/
             // str but not unicode object: go directly to the String
             return ((PyString) obj).getString();
         } else if (obj instanceof BufferProtocol) {
@@ -4673,7 +4686,7 @@ final class StringFormatter {
                 // Last c=pop() is the closing ')' while indexKey is just after the opening '('
                 String tmp = format.substring(keyStart, index - 1);
                 // Look it up using this extent as the (right type of) key.
-                this.args = dict.__getitem__(needUnicode ? new PyUnicode(tmp) : new PyString(tmp));
+                this.args = dict.__getitem__(needUnicode ? new PyUnicode(tmp) : new PyUnicode(tmp));
             } else {
                 // Not a mapping key: next clause will re-read c.
                 push();

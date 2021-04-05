@@ -24,8 +24,8 @@ public class exceptions extends PyObject implements ClassDictInit {
     /** <i>Internal use only. Do not call this method explicit.</i> */
     public static void classDictInit(PyObject dict) {
         dict.invoke("clear");
-        dict.__setitem__("__name__", new PyString("exceptions"));
-        dict.__setitem__("__doc__", new PyString(__doc__));
+        dict.__setitem__("__name__", new PyUnicode("exceptions"));
+        dict.__setitem__("__doc__", new PyUnicode(__doc__));
 
         ThreadState ts = Py.getThreadState();
         if (ts.getSystemState() == null) { // TODO: is this check still useful??

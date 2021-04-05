@@ -482,7 +482,7 @@ public class GrammarActions {
         char quoteChar = string.charAt(0);
         int start = 0;
         int end;
-        boolean ustring = unicodeLiterals;
+        boolean ustring = true; // unicodeLiterals; // CHANGED BY Tobias Kohn
 
         if (quoteChar == 'u' || quoteChar == 'U') {
             ustring = true;
@@ -528,7 +528,8 @@ public class GrammarActions {
             string = string.substring(start, end);
             if (ustring) {
                 // Raw unicode: handle unicode escapes
-                string = codecs.PyUnicode_DecodeRawUnicodeEscape(string, "strict");
+                // CHANGED BY Tobias Kohn -- this no longer applies
+                // string = codecs.PyUnicode_DecodeRawUnicodeEscape(string, "strict");
             }
         } else {
             // Plain unicode: already decoded, just handle escapes

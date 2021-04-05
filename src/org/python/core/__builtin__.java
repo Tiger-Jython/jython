@@ -284,6 +284,7 @@ public class __builtin__ {
         dict.__setitem__("basestring", PyBaseString.TYPE);
         dict.__setitem__("file", PyFile.TYPE);
         dict.__setitem__("slice", PySlice.TYPE);
+        dict.__setitem__("range", PyXRange.TYPE);
         dict.__setitem__("xrange", PyXRange.TYPE);
 
         dict.__setitem__("None", Py.None);
@@ -312,7 +313,7 @@ public class __builtin__ {
         dict.__setitem__("isinstance", new BuiltinFunctions("isinstance", 10, 2));
         dict.__setitem__("len", new BuiltinFunctions("len", 1, 1));
         dict.__setitem__("ord", new BuiltinFunctions("ord", 3, 1));
-        dict.__setitem__("range", new BuiltinFunctions("range", 2, 1, 3));
+        //dict.__setitem__("range", new BuiltinFunctions("range", 2, 1, 3));
         dict.__setitem__("sum", new BuiltinFunctions("sum", 12, 1, 2));
         dict.__setitem__("unichr", new BuiltinFunctions("unichr", 6, 1));
         dict.__setitem__("delattr", new BuiltinFunctions("delattr", 15, 2));
@@ -324,7 +325,8 @@ public class __builtin__ {
         dict.__setitem__("getattr", new BuiltinFunctions("getattr", 21, 2, 3));
         dict.__setitem__("hasattr", new BuiltinFunctions("hasattr", 22, 2));
         dict.__setitem__("hex", new BuiltinFunctions("hex", 23, 1));
-        dict.__setitem__("input", new BuiltinFunctions("input", 24, 0, 1));
+        dict.__setitem__("input", new BuiltinFunctions("input", 34, 0, 1));
+        //dict.__setitem__("input", new BuiltinFunctions("input", 24, 0, 1));
         dict.__setitem__("intern", new BuiltinFunctions("intern", 25, 1));
         dict.__setitem__("issubclass", new BuiltinFunctions("issubclass", 26, 2));
         dict.__setitem__("iter", new BuiltinFunctions("iter", 27, 1, 2));
@@ -334,7 +336,7 @@ public class __builtin__ {
         dict.__setitem__("min", new MinFunction());
         dict.__setitem__("oct", new BuiltinFunctions("oct", 32, 1));
         dict.__setitem__("pow", new BuiltinFunctions("pow", 33, 2, 3));
-        dict.__setitem__("raw_input", new BuiltinFunctions("raw_input", 34, 0, 1));
+        //dict.__setitem__("raw_input", new BuiltinFunctions("raw_input", 34, 0, 1));
         dict.__setitem__("reduce", new BuiltinFunctions("reduce", 35, 2, 3));
         dict.__setitem__("reload", new BuiltinFunctions("reload", 36, 1));
         dict.__setitem__("repr", new BuiltinFunctions("repr", 37, 1));
@@ -682,7 +684,7 @@ public class __builtin__ {
 
     public static PyObject input(PyObject prompt) {
         String line = raw_input(prompt);
-        return eval(new PyString(line));
+        return eval(new PyUnicode(line));
     }
 
     public static PyObject input() {
@@ -1139,7 +1141,7 @@ public class __builtin__ {
         }
     }
 
-    public static PyString __doc__zip = new PyString(
+    public static PyString __doc__zip = new PyUnicode(
         "zip(seq1 [, seq2 [...]]) -> [(seq1[0], seq2[0] ...), (...)]\n\n" +
         "Return a list of tuples, where each tuple contains the i-th element\n" +
         "from each of the argument sequences.  The returned list is\n" +

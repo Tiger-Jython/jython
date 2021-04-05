@@ -1,12 +1,7 @@
 /* Copyright (c) Jython Developers */
 package org.python.modules._csv;
 
-import org.python.core.PyIterator;
-import org.python.core.PyList;
-import org.python.core.PyObject;
-import org.python.core.PyString;
-import org.python.core.PyType;
-import org.python.core.Visitproc;
+import org.python.core.*;
 import org.python.expose.ExposedGet;
 import org.python.expose.ExposedType;
 
@@ -246,7 +241,7 @@ public class PyReader extends PyIterator {
     private void parse_save_field() {
         PyObject field;
 
-        field = new PyString(this.field.toString());
+        field = new PyUnicode(this.field.toString());
         if (numeric_field) {
             numeric_field = false;
             field = field.__float__();

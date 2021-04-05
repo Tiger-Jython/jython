@@ -215,14 +215,14 @@ public class PyClass extends PyObject implements Traverseproc {
         // module.class. If the class has no module, then just the class
         // name is printed.
         if (__dict__ == null) {
-            return new PyString(__name__);
+            return new PyUnicode(__name__);
         }
         PyObject mod = __dict__.__finditem__("__module__");
         if (mod == null || !(mod instanceof PyString)) {
-            return new PyString(__name__);
+            return new PyUnicode(__name__);
         }
         String smod = ((PyString) mod).toString();
-        return new PyString(smod + "." + __name__);
+        return new PyUnicode(smod + "." + __name__);
     }
 
     @Override

@@ -1,6 +1,8 @@
 // Copyright (c) Corporation for National Research Initiatives
 package org.python.core;
 
+import org.python.expose.ExposedGet;
+
 /**
  * The abstract superclass of PyObjects that implements a Sequence. Minimize the work in creating
  * such objects.

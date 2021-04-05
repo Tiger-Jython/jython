@@ -225,7 +225,7 @@ public class PyShadowString extends PyString {
     @ExposedMethod(type = MethodType.BINARY)
     final PyObject shadowstr___eq__(PyObject other) {
         // Re-wrap the primary value as a PyString to invoke the right kind of equality test.
-        PyObject result = testEqual(new PyString(getString()), other);
+        PyObject result = testEqual(new PyUnicode(getString()), other);
         if (result != Py.False) {
             // True, or null if str does not know how to compare with other (so we don't either).
             return result;

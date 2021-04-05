@@ -246,7 +246,7 @@ public class PyStringMap extends AbstractDict implements Traverseproc {
             if (key instanceof String) {
                 /* This is a bit complicated, but prevents us to duplicate
                    PyString#__repr__ logic here. */
-                buf.append(new PyString((String)key).__repr__().toString());
+                buf.append(new PyUnicode((String)key).__repr__().toString());
             } else {
                 buf.append(((PyObject)key).__repr__().toString());
             }

@@ -63,7 +63,7 @@ public class StdoutWrapper extends OutputStream {
         if (out instanceof PyFile) {
             ((PyFile) out).write(s);
         } else {
-            out.invoke("write", new PyString(s));
+            out.invoke("write", new PyUnicode(s));
         }
     }
 

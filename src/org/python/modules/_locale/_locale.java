@@ -10,15 +10,7 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
-import org.python.core.ClassDictInit;
-import org.python.core.Py;
-import org.python.core.PyDictionary;
-import org.python.core.PyException;
-import org.python.core.PyInteger;
-import org.python.core.PyObject;
-import org.python.core.PyString;
-import org.python.core.PyStringMap;
-import org.python.core.PySystemState;
+import org.python.core.*;
 
 import static org.python.core.RegistryKey.PYTHON_LOCALE_CONTROL;
 
@@ -205,7 +197,7 @@ public class _locale implements ClassDictInit {
      */
     protected static void putConvEntry(PyDictionary result, String key, String value) {
         try {
-            result.put(new PyString(key), new PyString(value));
+            result.put(new PyUnicode(key), new PyUnicode(value));
         } catch (IllegalArgumentException iae) {
             throw new IllegalArgumentException(iae.getMessage() + " for key " + key);
         }
@@ -217,7 +209,7 @@ public class _locale implements ClassDictInit {
      */
     protected static void putConvEntry(PyDictionary result, String key, char value) {
         try {
-            result.put(new PyString(key), new PyString(value));
+            result.put(new PyUnicode(key), new PyUnicode(value));
         } catch (IllegalArgumentException iae) {
             throw new IllegalArgumentException(iae.getMessage() + " for key " + key);
         }
@@ -229,7 +221,7 @@ public class _locale implements ClassDictInit {
      */
     protected static void putConvEntry(PyDictionary result, String key, PyObject value) {
         try {
-            result.put(new PyString(key), value);
+            result.put(new PyUnicode(key), value);
         } catch (IllegalArgumentException iae) {
             throw new IllegalArgumentException(iae.getMessage() + " for key " + key);
         }

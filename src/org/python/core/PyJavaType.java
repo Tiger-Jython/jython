@@ -862,7 +862,7 @@ public class PyJavaType extends PyType {
                             throw Py.JavaError(e);
                         }
                         ((PyReflectedFunction) memb).__doc__ = doc instanceof PyString
-                                ? (PyString) doc : new PyString(doc.toString());
+                                ? (PyString) doc : new PyUnicode(doc.toString());
                     }
                 }
             }
@@ -911,7 +911,7 @@ public class PyJavaType extends PyType {
              * If one of our super-classes has something defined for this name, check if it's a bean
              * property, and if so, try to fill in any gaps in our property from there.
              */
-            PyObject fromType[] = new PyObject[] {null};
+            PyObject[] fromType = new PyObject[] {null};
             PyObject superForName = lookup_where_mro(prop.__name__, fromType);
 
             if (superForName instanceof PyBeanProperty) {
