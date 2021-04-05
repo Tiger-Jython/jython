@@ -2,16 +2,7 @@ package org.python.core.adapter;
 
 import java.math.BigInteger;
 
-import org.python.core.Py;
-import org.python.core.PyArray;
-import org.python.core.PyFloat;
-import org.python.core.PyInteger;
-import org.python.core.PyJavaType;
-import org.python.core.PyLong;
-import org.python.core.PyObject;
-import org.python.core.PyProxy;
-import org.python.core.PyType;
-import org.python.core.PyUnicode;
+import org.python.core.*;
 
 /**
  * Implements the algorithm originally used in {@link Py#java2py} to adapt objects.
@@ -75,6 +66,13 @@ public class ClassicPyObjectAdapter extends ExtensiblePyObjectAdapter {
 
             public PyObject adapt(Object o) {
                 return PyType.fromClass((Class<?>)o, false);
+            }
+
+        });
+        add(new ClassAdapter(java.awt.Color.class) {
+
+            public PyObject adapt(Object o) {
+                return new PyColor((java.awt.Color)o);
             }
 
         });

@@ -193,7 +193,7 @@ public class PyLong extends PyObject {
 
     @ExposedMethod(names = "__repr__", doc = BuiltinDocs.long___repr___doc)
     final String long_toString() {
-        return getValue().toString() + "L";
+        return getValue().toString();
     }
 
     @Override

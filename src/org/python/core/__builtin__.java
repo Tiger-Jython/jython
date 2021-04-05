@@ -286,6 +286,7 @@ public class __builtin__ {
         dict.__setitem__("slice", PySlice.TYPE);
         dict.__setitem__("range", PyXRange.TYPE);
         dict.__setitem__("xrange", PyXRange.TYPE);
+        dict.__setitem__("color", PyColor.TYPE);
 
         dict.__setitem__("None", Py.None);
         dict.__setitem__("NotImplemented", Py.NotImplemented);

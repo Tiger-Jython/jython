@@ -410,7 +410,9 @@ public class ParserFacade {
      */
     private static String findEncoding(BufferedReader br)
             throws IOException {
-        String encoding = null;
+        // CHANGED BY Tobias Kohn
+        // We are setting the default encoding to utf-8
+        String encoding = "utf-8";
         for (int i = 0; i < 2; i++) {
             String strLine = br.readLine();
             if (strLine == null) {
