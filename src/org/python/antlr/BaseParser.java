@@ -13,17 +13,28 @@ public class BaseParser {
     protected final String filename;
     protected final String encoding;
     protected ErrorHandler errorHandler = new FailFastHandler();
-    
+
+    protected boolean printFunction;
+    protected boolean unicodeLiterals;
+
     public BaseParser(CharStream stream, String filename, String encoding) {
-        this(stream, filename, encoding, false);
+        this(stream, filename, encoding, false, false, false);
+    }
+
+    public BaseParser(CharStream stream, String filename, String encoding, boolean printFunction,
+                      boolean unicodeLiterals) {
+        this(stream, filename, encoding, printFunction, unicodeLiterals, false);
     }
     
     @Deprecated
-    public BaseParser(CharStream stream, String filename, String encoding, boolean partial) {
+    public BaseParser(CharStream stream, String filename, String encoding, boolean printFunction,
+                      boolean unicodeLiterals, boolean partial) {
         this.charStream = stream;
         this.filename = filename;
         this.encoding = encoding;
         this.partial = partial;
+        this.printFunction = printFunction;
+        this.unicodeLiterals = unicodeLiterals;
     }
 
     public void setAntlrErrorHandler(ErrorHandler eh) {
@@ -40,6 +51,8 @@ public class BaseParser {
         PythonParser parser = new PythonParser(tokens, encoding);
         parser.setErrorHandler(errorHandler);
         parser.setTreeAdaptor(new PythonTreeAdaptor());
+        parser.setPrintFunction(printFunction);
+        parser.setUnicodeLiterals(unicodeLiterals);
         return parser;
     }
 

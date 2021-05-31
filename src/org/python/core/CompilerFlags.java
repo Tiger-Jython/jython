@@ -57,6 +57,28 @@ public class CompilerFlags implements Serializable {
         return flags.contains(flag);
     }
 
+    public boolean isPrintFunction() {
+        return isFlagSet(CodeFlag.CO_FUTURE_PRINT_FUNCTION);
+    }
+
+    public boolean isUnicodeLiterals() {
+        return isFlagSet(CodeFlag.CO_FUTURE_UNICODE_LITERALS);
+    }
+
+    public void setPrintFunction(boolean flag) {
+        if (flag)
+            flags.add(CodeFlag.CO_FUTURE_PRINT_FUNCTION);
+        else
+            flags.remove(CodeFlag.CO_FUTURE_PRINT_FUNCTION);
+    }
+
+    public void setUnicodeLiterals(boolean flag) {
+        if (flag)
+            flags.add(CodeFlag.CO_FUTURE_UNICODE_LITERALS);
+        else
+            flags.remove(CodeFlag.CO_FUTURE_UNICODE_LITERALS);
+    }
+
     @Override
     public String toString() {
         return String.format(

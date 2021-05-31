@@ -271,5 +271,4 @@ public class PyColor extends PyObject {
 
         return -2;
     }
-
 }

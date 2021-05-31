@@ -202,6 +202,14 @@ import java.util.ListIterator;
     public void displayRecognitionError(String[] tokenNames, RecognitionException e) {
         //Do nothing. We will handle error display elsewhere.
     }
+
+    public void setPrintFunction(boolean p) {
+        printFunction = p;
+    }
+
+    public void setUnicodeLiterals(boolean u) {
+        unicodeLiterals = u;
+    }
 }
 
 @rulecatch {
