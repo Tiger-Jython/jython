@@ -539,7 +539,10 @@ public class imp {
             org.python.antlr.base.mod node;
             try {
                 // Compile source to AST
-                node = ParserFacade.parse(source, CompileMode.exec, filename, new CompilerFlags());
+                CompilerFlags flags = new CompilerFlags();
+                flags.setPrintFunction(true);
+                flags.setUnicodeLiterals(true);
+                node = ParserFacade.parse(source, CompileMode.exec, filename, flags);
             } finally {
                 source.close();
             }
