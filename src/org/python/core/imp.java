@@ -1,12 +1,7 @@
 // Copyright (c) Corporation for National Research Initiatives
 package org.python.core;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
@@ -540,8 +535,19 @@ public class imp {
             try {
                 // Compile source to AST
                 CompilerFlags flags = new CompilerFlags();
-                flags.setPrintFunction(true);
-                flags.setUnicodeLiterals(true);
+                int sz = source.available();
+                if (sz > 0) {
+                    ByteArrayOutputStream result = new ByteArrayOutputStream();
+                    byte[] b = new byte[Math.min(sz, 1024)];
+                    for (int len; (len = source.read(b)) != -1; ) {
+                        result.write(b, 0, len);
+                    }
+                    source = new ByteArrayInputStream(result.toByteArray());
+                    if (!hasOldPrint(result.toString())) {
+                        flags.setPrintFunction(true);
+                        flags.setUnicodeLiterals(true);
+                    }
+                }
                 node = ParserFacade.parse(source, CompileMode.exec, filename, flags);
             } finally {
                 source.close();
@@ -552,6 +558,30 @@ public class imp {
         } catch (Throwable t) {
             throw ParserFacade.fixParseError(null, t, filename);
         }
+    }
+
+    /**
+     * Checks if there may be a print statement in the source code.  This is not a fool-proof method, but basically
+     * simply checks whether there is even a single instance of a print that is not followed by an opening parenthesis.
+     *
+     * While we assume that all user-defined code uses print as a function, we also have to compile the library with
+     * 'old-style' code.  Using this safe-guard seems to work in properly detecting the internal library modules and
+     * ensuring that they are compiled with the usual flags (i.e. `print` as a sttement, not a function).
+     */
+    private static boolean hasOldPrint(String programCode) {
+        int i = 0;
+        while ((i = programCode.indexOf("print", i)) >= 0) {
+            i += 5;
+            while (i < programCode.length() && programCode.charAt(i) == ' ')
+                i++;
+            if (i < programCode.length()) {
+                char ch = programCode.charAt(i);
+                if (!(ch == '(' || ch == ')' || ch == ',' || ch == ';' || ch == ':' ||
+                        ch == ']' || ch == '}' || ch < ' '))
+                    return true;
+            }
+        }
+        return false;
     }
 
     public static PyObject createFromSource(String name, InputStream fp, String filename) {

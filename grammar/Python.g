@@ -169,7 +169,7 @@ import java.util.ListIterator;
     private String encoding;
 
     private boolean printFunction = false;
-    private boolean unicodeLiterals = false;
+    private boolean unicodeLiterals = true;
 
     public void setErrorHandler(ErrorHandler eh) {
         this.errorHandler = eh;
