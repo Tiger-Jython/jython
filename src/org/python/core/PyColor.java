@@ -112,6 +112,7 @@ public class PyColor extends PyObject {
     }
 
     private Color color;
+    private Float hue;
 
     public PyColor() {
         this(TYPE, Color.BLACK);
@@ -167,7 +168,8 @@ public class PyColor extends PyObject {
     public void setRed(float value) {
         int v = (int)(Math.max(Math.min(value, 1.0) * 255, 0));
         int cValue = color.getRGB() & ~0xFF0000;
-        color = new Color(cValue | v << 16);
+        color = new Color(cValue | v << 16, true);
+        hue = null;
     }
 
     @ExposedGet(name = "green")
@@ -179,7 +181,8 @@ public class PyColor extends PyObject {
     public void setGreen(float value) {
         int v = (int)(Math.max(Math.min(value, 1.0) * 255, 0));
         int cValue = color.getRGB() & ~0x00FF00;
-        color = new Color(cValue | v << 8);
+        color = new Color(cValue | v << 8, true);
+        hue = null;
     }
 
     @ExposedGet(name = "blue")
@@ -191,11 +194,79 @@ public class PyColor extends PyObject {
     public void setBlue(float value) {
         int v = (int)(Math.max(Math.min(value, 1.0) * 255, 0));
         int cValue = color.getRGB() & ~0x0000FF;
-        color = new Color(cValue | v);
+        color = new Color(cValue | v, true);
+        hue = null;
+    }
+
+    @ExposedGet(name = "alpha")
+    public float getAlpha() {
+        return color.getAlpha() / 255.0f;
+    }
+
+    @ExposedSet(name = "alpha")
+    public void setAlpha(float value) {
+        int v = (int)(Math.max(Math.min(value, 1.0) * 255, 0));
+        int cValue = color.getRGB() & 0xFFFFFF;
+        color = new Color(cValue | v << 24, true);
+    }
+
+    @ExposedGet(name = "hue")
+    public float getHue() {
+        if (hue == null) {
+            float[] hsb = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
+            hue = hsb[0];
+        }
+        return hue;
+    }
+
+    @ExposedSet(name = "hue")
+    public void setHue(float hue) {
+        float[] hsb = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
+        int alpha = color.getRGB() & ~0xFFFFFF;
+        color = new Color(Color.HSBtoRGB(hue, hsb[1], hsb[2]) | alpha, true);
+        this.hue = hue;
+    }
+
+    @ExposedGet(name = "saturation")
+    public float getSaturation() {
+        float[] hsb = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
+        return hsb[1];
+    }
+
+    @ExposedSet(name = "saturation")
+    public void setSaturation(float saturation) {
+        float[] hsb = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
+        int alpha = color.getRGB() & ~0xFFFFFF;
+        color = new Color(Color.HSBtoRGB(hsb[0], saturation, hsb[2]) | alpha, true);
+    }
+
+    @ExposedGet(name = "brightness")
+    public float getBrightness() {
+        float[] hsb = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
+        return hsb[2];
+    }
+
+    @ExposedSet(name = "brightness")
+    public void setBrightness(float brightness) {
+        float[] hsb = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
+        int alpha = color.getRGB() & ~0xFFFFFF;
+        color = new Color(Color.HSBtoRGB(hsb[0], hsb[1], brightness) | alpha, true);
     }
 
     public int getValue() {
         return color.getRGB();
+    }
+
+    @ExposedMethod(names = {"brighter"})
+    public void brighter() {
+        color = color.brighter();
+        hue = null;
+    }
+
+    @ExposedMethod(names = {"darker"})
+    public void darker() {
+        color = color.darker();
+        hue = null;
     }
 
     @Override
@@ -244,8 +315,120 @@ public class PyColor extends PyObject {
     }
 
     @Override
+    public PyObject __invert__() {
+        int value = color.getRGB() ^ 0xFFFFFF;
+        return new PyColor(value);
+    }
+
+    @Override
+    public PyObject __add__(PyObject other) {
+        if (other instanceof PyColor)
+            return color___add__((PyColor)other);
+        return super.__add__(other);
+    }
+
+    private PyObject color___add__(PyColor other) {
+        float[] comps = color.getRGBColorComponents(null);
+        float[] otherComps = other.color.getRGBColorComponents(null);
+        float thisAlpha = getAlpha();
+        float otherAlpha = other.getAlpha();
+        for (int i = 0; i < comps.length; i++)
+            comps[i] = Math.min(comps[i] * thisAlpha + otherComps[i] * otherAlpha, 1.0f);
+        return new PyColor(new Color(comps[0], comps[1], comps[2], (thisAlpha + otherAlpha) / 2f));
+    }
+
+    @Override
+    public PyObject __and__(PyObject other) {
+        if (other instanceof PyColor)
+            return color___and__((PyColor)other);
+        if (other instanceof PyInteger)
+            return color___and__(other.asInt());
+        return super.__and__(other);
+    }
+
+    private PyObject color___and__(PyColor other) {
+        int value = color.getRGB() & other.color.getRGB();
+        return new PyColor(new Color(value, true));
+    }
+
+    private PyObject color___and__(int other) {
+        int value = color.getRGB() & (other | ~0xFFFFFF);
+        return new PyColor(new Color(value, true));
+    }
+
+    @Override
+    public PyObject __or__(PyObject other) {
+        if (other instanceof PyColor)
+            return color___or__((PyColor)other);
+        if (other instanceof PyInteger)
+            return color___or__(other.asInt());
+        return super.__or__(other);
+    }
+
+    private PyObject color___or__(PyColor other) {
+        int value = color.getRGB() | other.color.getRGB();
+        return new PyColor(new Color(value, true));
+    }
+
+    private PyObject color___or__(int other) {
+        int value = color.getRGB() | (other & 0xFFFFFF);
+        return new PyColor(new Color(value, true));
+    }
+
+    @Override
+    public PyObject __mul__(PyObject other) {
+        if (other instanceof PyFloat)
+            return color___mul__((float)(other.asDouble()));
+        if (other instanceof PyInteger)
+            return color___mul__((float)(other.asDouble()));
+        return super.__mul__(other);
+    }
+
+    @Override
+    public PyObject __rmul__(PyObject other) {
+        if (other instanceof PyFloat)
+            return color___mul__((float)(other.asDouble()));
+        if (other instanceof PyInteger)
+            return color___mul__((float)(other.asDouble()));
+        return super.__rmul__(other);
+    }
+
+    private PyObject color___mul__(float factor) {
+        float[] comps = color.getRGBColorComponents(null);
+        float r = Math.max(Math.min(comps[0] * factor, 1.0f), 0.0f);
+        float g = Math.max(Math.min(comps[1] * factor, 1.0f), 0.0f);
+        float b = Math.max(Math.min(comps[2] * factor, 1.0f), 0.0f);
+        int rgba = (new Color(r, g, b)).getRGB();
+        return new PyColor(rgba | (color.getRGB() & ~0xFFFFFF));
+    }
+
+    @Override
+    public PyObject __div__(PyObject other) {
+        if (other instanceof PyFloat)
+            return color___mul__(1f / (float)(other.asDouble()));
+        if (other instanceof PyInteger)
+            return color___mul__(1f / (float)(other.asDouble()));
+        return super.__div__(other);
+    }
+
+    @Override
     public int __cmp__(PyObject other) {
         return color___cmp__(other);
+    }
+
+    private int cmp_color_values(int a, int b) {
+        if (a != b) {
+            float[] aValues = Color.RGBtoHSB((a >> 16) & 0xFF, (a >> 8) & 0xFF, a & 0xFF, null);
+            float[] bValues = Color.RGBtoHSB((b >> 16) & 0xFF, (b >> 8) & 0xFF, b & 0xFF, null);
+            if (aValues[0] == bValues[0]) {
+                if (aValues[1] == bValues[1])
+                    return (aValues[2] < bValues[2]) ? -1 : 1;
+                else
+                    return (aValues[1] < bValues[1]) ? -1 : 1;
+            } else
+                return (aValues[0] < bValues[0]) ? -1 : 1;
+        } else
+            return 0;
     }
 
     @ExposedMethod(type = MethodType.CMP)
@@ -254,18 +437,16 @@ public class PyColor extends PyObject {
         int thisValue = color.getRGB() & 0xFFFFFF;
 
         if (other instanceof PyColor) {
-            return (thisValue == (((PyColor) other).color.getRGB() & 0xFFFFFF)) ? 0 : -2;
+            return cmp_color_values(thisValue, (((PyColor) other).color.getRGB() & 0xFFFFFF));
         } else if (other instanceof PyInteger) {
             int otherValue = ((PyInteger)other).getValue();
             if (Integer.toUnsignedLong(thisValue) == otherValue || thisValue == otherValue)
                 return 0;
-            return -2;
+            return cmp_color_values(thisValue, otherValue);
         } else if (other instanceof PyString) {
-            Integer otherValue = colorValueFromString(((PyString)other).asString());
-            if (otherValue != null) {
-                if (thisValue == otherValue)
-                    return 0;
-            }
+            Integer otherValue = colorValueFromString(other.asString());
+            if (otherValue != null)
+                return cmp_color_values(thisValue, otherValue);
             return -2;
         }
 
