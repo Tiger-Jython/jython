@@ -169,7 +169,8 @@ import java.util.ListIterator;
     private String encoding;
 
     private boolean printFunction = false;
-    private boolean unicodeLiterals = true;
+    private boolean repeatLoop = false;
+    private boolean unicodeLiterals = false;
 
     public void setErrorHandler(ErrorHandler eh) {
         this.errorHandler = eh;
@@ -205,6 +206,10 @@ import java.util.ListIterator;
 
     public void setPrintFunction(boolean p) {
         printFunction = p;
+    }
+
+    public void setRepeatLoop(boolean r) {
+        repeatLoop = r;
     }
 
     public void setUnicodeLiterals(boolean u) {
@@ -428,6 +433,9 @@ name_or_print
     | {printFunction}? => PRINT {
         $tok = $name_or_print.start;
     }
+    | {!repeatLoop}? => REPEAT {
+        $tok = $name_or_print.start;
+    }
     ;
 
 //not in CPython's Grammar file
@@ -462,6 +470,7 @@ attr
     | PASS
     | PRINT
     | RAISE
+    | REPEAT
     | RETURN
     | TRY
     | WHILE
@@ -982,6 +991,8 @@ import_from
                              printFunction = true;
                          } else if (a.getInternalName().equals("unicode_literals")) {
                              unicodeLiterals = true;
+                         } else if (a.getInternalName().equals("repeat_loop")) {
+                             repeatLoop = true;
                          }
                      }
                  }
@@ -1003,6 +1014,8 @@ import_from
                              printFunction = true;
                          } else if (a.getInternalName().equals("unicode_literals")) {
                              unicodeLiterals = true;
+                         } else if (a.getInternalName().equals("repeat_loop")) {
+                             repeatLoop = true;
                          }
                      }
                  }
@@ -1115,6 +1128,7 @@ compound_stmt
     | with_stmt
     | (decorators? DEF) => funcdef
     | classdef
+    | {repeatLoop}? => repeat_stmt
     ;
 
 //if_stmt: 'if' test ':' suite ('elif' test ':' suite)* ['else' ':' suite]
@@ -1179,6 +1193,20 @@ while_stmt
     : WHILE test[expr_contextType.Load] COLON s1=suite[false] (ORELSE COLON s2=suite[false])?
       {
           stype = actions.makeWhile($WHILE, actions.castExpr($test.tree), $s1.stypes, $s2.stypes);
+      }
+    ;
+
+// repeat_stmt: 'repeat' test ':' suite
+repeat_stmt
+@init {
+    stmt stype = null;
+}
+@after {
+    $repeat_stmt.tree = stype;
+}
+    : REPEAT (test[expr_contextType.Load])? COLON s1=suite[false]
+      {
+          stype = actions.makeRepeat($REPEAT, actions.castExpr($test.tree), $s1.stypes);
       }
     ;
 
@@ -2271,6 +2299,7 @@ ORELSE    : 'else' ;
 PASS      : 'pass'  ;
 PRINT     : 'print' ;
 RAISE     : 'raise' ;
+REPEAT    : 'repeat' ;
 RETURN    : 'return' ;
 TRY       : 'try' ;
 WHILE     : 'while' ;

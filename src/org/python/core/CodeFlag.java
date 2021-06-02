@@ -58,7 +58,11 @@ public enum CodeFlag {
     /**
      * unicode literals.
      */
-    CO_FUTURE_UNICODE_LITERALS(0x20000);
+    CO_FUTURE_UNICODE_LITERALS(0x20000),
+    /**
+     * repeat loop (TigerJython)
+     */
+    CO_FUTURE_REPEAT_LOOP(0x100000);
 
 
     public final int flag;

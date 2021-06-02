@@ -3,9 +3,7 @@ package org.python.antlr;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import org.antlr.runtime.Token;
 import org.python.antlr.ast.Attribute;
@@ -268,6 +266,19 @@ public class GrammarActions {
         List<stmt> o = castStmts(orelse);
         List<stmt> b = castStmts(body);
         return new For(t, target, iter, b, o);
+    }
+
+    stmt makeRepeat(Token t, expr iter, List body) {
+        List<stmt> b = castStmts(body);
+
+        if (iter != null) {
+            List<expr> a = Collections.singletonList(iter);
+            return new For(t, new Name(t, "_", expr_contextType.Store),
+                    new Call(t, new Name(t, "range", expr_contextType.Load), a, null, null, null),
+                    b, null);
+        } else {
+            return new While(t, new Name(t, "True", expr_contextType.Load), b, null);
+        }
     }
 
     stmt makeTryExcept(Token t, List body, List<excepthandler> handlers, List orelse, List finBody) {

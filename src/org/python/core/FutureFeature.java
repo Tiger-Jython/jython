@@ -32,6 +32,10 @@ public enum FutureFeature implements Pragma {
      */
     unicode_literals(CodeFlag.CO_FUTURE_UNICODE_LITERALS),
     /**
+     * Enables repeat loops.
+     */
+    repeat_loop(CodeFlag.CO_FUTURE_REPEAT_LOOP),
+    /**
      * Use braces for block delimiters instead of indentation.
      */
     braces {
