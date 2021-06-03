@@ -155,7 +155,7 @@ public class ParserFacade {
         if (kind != null) {
             CharStream cs = new NoCloseReaderStream(reader);
             BaseParser parser = new BaseParser(cs, filename, cflags.encoding,
-                    cflags.isPrintFunction(), cflags.isUnicodeLiterals());
+                    cflags.isPrintFunction(), cflags.isUnicodeLiterals(), cflags.isRepeatLoop());
             return kind.dispatch(parser);
         } else {
             throw Py.ValueError("parse kind must be eval, exec, or single");

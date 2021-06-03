@@ -61,6 +61,10 @@ public class CompilerFlags implements Serializable {
         return isFlagSet(CodeFlag.CO_FUTURE_PRINT_FUNCTION);
     }
 
+    public boolean isRepeatLoop() {
+        return isFlagSet(CodeFlag.CO_FUTURE_REPEAT_LOOP);
+    }
+
     public boolean isUnicodeLiterals() {
         return isFlagSet(CodeFlag.CO_FUTURE_UNICODE_LITERALS);
     }
@@ -70,6 +74,13 @@ public class CompilerFlags implements Serializable {
             flags.add(CodeFlag.CO_FUTURE_PRINT_FUNCTION);
         else
             flags.remove(CodeFlag.CO_FUTURE_PRINT_FUNCTION);
+    }
+
+    public void setRepeatLoop(boolean flag) {
+        if (flag)
+            flags.add(CodeFlag.CO_FUTURE_REPEAT_LOOP);
+        else
+            flags.remove(CodeFlag.CO_FUTURE_REPEAT_LOOP);
     }
 
     public void setUnicodeLiterals(boolean flag) {

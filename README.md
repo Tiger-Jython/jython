@@ -6,7 +6,7 @@ include:
 
 - **Emulation of Python 3 syntax and behaviour:**
   This emulation of Python 3 behaviour is rather limited and superficial.  This is
-  _not_ Jython 3!  However, TigerJython is an educational environment and our aim
+  _not_ Jython 3!  However, TigerJython is an educational environment, and our aim
   is to backport enough of Python 3 so that beginners can start with current syntax
   until a full Jython 3 version becomes ready.
   
@@ -16,8 +16,6 @@ include:
   * Likewise, `long`s are output without the trailing `L` and identify as `int`s.
   * Some builtin functions are replaced, i.e. `range` is the same as `xrange` in
     Jython.
-  * While (type) annotations will be supported syntactically, they will be thrown
-    away and are completely ignored by the interpreter.
   
 - **Added fields and properties:**
   Sequences have additional properties `.head` and `.tail` to easily access the first
@@ -32,6 +30,23 @@ include:
   differently in that it is somewhere inbetween Python 2 and Python 3 behaviour: if
   the entered string is a number, the returned type is an `int` or `float`, 
   respectively, whereas other strings are returned as `str`.
+  
+- **Repeat-loop:**
+  There is an additional loop construct using the keyword `repeat`.  You enable it by
+  using `from __future__ import repeat_loop`.  It then allows you to say
+  `repeat n: suite`, where `n` is the number of desired iterations.
+  
+- **print/repeat detection:**
+  Before properly parsing your program, it will be scanned to detect whether you are
+  using `print` as a statement or as a function.  Likewise, it will also try to discover
+  the use of `repeat`.  This is not a failsafe method, but aimed at TigerJython's use case
+  where most programs use `print` as a function and use `repeat` as a loop.  At the same
+  time we need to fully support the entire existing library, which does neither.
+  
+- **Roadmap/Plans for future extensions:**
+  Switching to the new Python 3 parser, bringing full support for Python 3 syntax.
+  This will also allow for type annotations (although they will be ignored by the
+  compiler/interpreter).
 
 
 ## Original Readme

@@ -170,7 +170,7 @@ import java.util.ListIterator;
 
     private boolean printFunction = false;
     private boolean repeatLoop = false;
-    private boolean unicodeLiterals = false;
+    private boolean unicodeLiterals = true;
 
     public void setErrorHandler(ErrorHandler eh) {
         this.errorHandler = eh;
@@ -607,6 +607,12 @@ fpdef[expr_contextType ctype]
       {
           etype = new Name($NAME, $NAME.text, ctype);
       }
+    | {printFunction}? => PRINT {
+          etype = new Name($PRINT, "print", ctype);
+    }
+    | {!repeatLoop}? => REPEAT {
+          etype = new Name($REPEAT, "repeat", ctype);
+    }
     | (LPAREN fpdef[null] COMMA) => LPAREN fplist RPAREN
       {
           etype = new Tuple($fplist.start, actions.castExprs($fplist.etypes), expr_contextType.Store);
@@ -1044,6 +1050,12 @@ import_as_name
     : name=NAME (AS asname=NAME)?
     {
         $atype = new alias(actions.makeNameNode($name), actions.makeNameNode($asname));
+    }
+    | {printFunction}? => PRINT (AS asname=NAME)? {
+        $atype = new alias(actions.makeNameNode($PRINT), actions.makeNameNode($asname));
+    }
+    | {!repeatLoop}? => REPEAT (AS asname=NAME)? {
+        $atype = new alias(actions.makeNameNode($REPEAT), actions.makeNameNode($asname));
     }
     ;
 

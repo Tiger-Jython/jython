@@ -268,12 +268,15 @@ public class GrammarActions {
         return new For(t, target, iter, b, o);
     }
 
+    // `repeat` comes in two versions:
+    // - `repeat expr: suite` is translated to a `for _$rep$_ in range(expr): suite`.
+    // - `repeat: suite` is translated to `while True: suite`
     stmt makeRepeat(Token t, expr iter, List body) {
         List<stmt> b = castStmts(body);
 
         if (iter != null) {
             List<expr> a = Collections.singletonList(iter);
-            return new For(t, new Name(t, "_", expr_contextType.Store),
+            return new For(t, new Name(t, "_$rep$_", expr_contextType.Store),
                     new Call(t, new Name(t, "range", expr_contextType.Load), a, null, null, null),
                     b, null);
         } else {
@@ -493,7 +496,7 @@ public class GrammarActions {
         char quoteChar = string.charAt(0);
         int start = 0;
         int end;
-        boolean ustring = true; // unicodeLiterals; // CHANGED BY Tobias Kohn
+        boolean ustring = unicodeLiterals;
 
         if (quoteChar == 'u' || quoteChar == 'U') {
             ustring = true;
