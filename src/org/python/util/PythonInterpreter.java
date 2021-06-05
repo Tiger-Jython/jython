@@ -299,6 +299,11 @@ public class PythonInterpreter implements AutoCloseable, Closeable {
     }
 
     public PyCode compile(String script, String filename) {
+        FeatureDetector fdet = new FeatureDetector(script);
+        boolean print_stmt = fdet.getPrintStatement();
+        cflags.setPrintFunction(!print_stmt);
+        cflags.setUnicodeLiterals(!print_stmt);
+        cflags.setRepeatLoop(fdet.getRepeatLoop());
         return compile(new StringReader(script), filename);
     }
 

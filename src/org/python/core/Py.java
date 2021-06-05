@@ -2251,6 +2251,13 @@ public final class Py extends PrePy {
         } else {
             data += "\n\n";
         }
+        if (cflags == null)
+            cflags = new CompilerFlags();
+        FeatureDetector fdet = new FeatureDetector(data);
+        boolean print_stmt = fdet.getPrintStatement();
+        cflags.setPrintFunction(!print_stmt);
+        cflags.setUnicodeLiterals(!print_stmt);
+        cflags.setRepeatLoop(fdet.getRepeatLoop());
         mod node = ParserFacade.parse(data, kind, filename, cflags);
         return Py.compile_flags(node, filename, kind, cflags);
     }

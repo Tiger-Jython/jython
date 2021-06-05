@@ -10,11 +10,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.nio.ByteBuffer;
-import java.nio.charset.CharacterCodingException;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
-import java.nio.charset.CodingErrorAction;
-import java.nio.charset.UnsupportedCharsetException;
+import java.nio.charset.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -278,7 +274,8 @@ public class ParserFacade {
 
         BufferedReader bufferedReader = new BufferedReader(reader);
         bufferedReader.mark(MARK_LIMIT);
-        if (findEncoding(bufferedReader) != null) {
+        String enc = findEncoding(bufferedReader);
+        if (enc != null && !enc.equals("utf-8")) {
             throw new ParseException("encoding declaration in Unicode string");
         }
         bufferedReader.reset();
@@ -312,7 +309,7 @@ public class ParserFacade {
             }
         }
         if (cflags.source_is_utf8) {
-            if (encoding != null) {
+            if (encoding != null && !encoding.equals("utf-8")) {
                 throw new ParseException("encoding declaration in Unicode string");
             }
             encoding = "utf-8";
@@ -333,9 +330,9 @@ public class ParserFacade {
             // Use ascii for the raw bytes when no encoding was specified
             if (encoding == null) {
                 if (fromString) {
-                    cs = Charset.forName("ISO-8859-1");
+                    cs = StandardCharsets.UTF_8; // ("ISO-8859-1");
                 } else {
-                    cs = Charset.forName("ascii");
+                    cs = StandardCharsets.US_ASCII;
                 }
             } else {
                 cs = Charset.forName(encoding);
@@ -357,7 +354,8 @@ public class ParserFacade {
             return prepBufReader(new StringReader(string), cflags, filename);
         }
 
-        byte[] stringBytes = StringUtil.toBytes(string);
+        cflags.source_is_utf8 = true;
+        byte[] stringBytes = StringUtil.toBytesUTF(string);
         return prepBufReader(new ByteArrayInputStream(stringBytes), cflags, filename, true, false);
     }
 
@@ -392,7 +390,7 @@ public class ParserFacade {
     private static String readEncoding(InputStream stream) throws IOException {
         stream.mark(MARK_LIMIT);
         String encoding = null;
-        BufferedReader br = new BufferedReader(new InputStreamReader(stream, "ISO-8859-1"), 512);
+        BufferedReader br = new BufferedReader(new InputStreamReader(stream, StandardCharsets.ISO_8859_1), 512);
         encoding = findEncoding(br);
         // XXX: reset() can still raise an IOException if a line exceeds our large mark
         // limit
