@@ -2,7 +2,10 @@ package org.python.antlr;
 
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
+import java.nio.charset.CodingErrorAction;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import org.antlr.runtime.Token;
@@ -548,8 +551,31 @@ public class GrammarActions {
         } else {
             // Plain unicode: already decoded, just handle escapes
             string = PyString.decode_UnicodeEscape(string, start, end, "strict", ustring);
+            if (encoding != null && encoding.equals("utf-8"))
+                string = aux_decode_utf8(string);
         }
         return new StringPair(string, ustring);
+    }
+
+    private String aux_decode_utf8(String s) {
+        if (s != null && s.length() > 0) {
+            byte[] b = new byte[s.length()];
+            for (int i = 0; i < s.length(); i++)
+                if (s.charAt(i) > 0xFF)
+                    return s;
+                else
+                    b[i] = (byte)s.charAt(i);
+            try{
+                return StandardCharsets.UTF_8.newDecoder()
+                                .onMalformedInput(CodingErrorAction.REPORT)
+                                .onUnmappableCharacter(CodingErrorAction.REPORT)
+                                .decode(ByteBuffer.wrap(b)).toString();
+            }
+            catch (CharacterCodingException e){
+                return s;
+            }
+        } else
+            return s;
     }
 
     Token extractStringToken(List s) {

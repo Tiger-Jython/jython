@@ -15,6 +15,10 @@ import java.io.Serializable;
 import java.io.StreamCorruptedException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.CodingErrorAction;
+import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -705,7 +709,25 @@ public final class Py extends PrePy {
         } else {
             // It's bytes, so must decode properly
             assert "utf-8".equals(PySystemState.FILE_SYSTEM_ENCODING.toString());
-            return codecs.PyUnicode_DecodeUTF8(s, null);
+            // We replaced the original use of `PyUnicode_DecodeUTF8` by this because of issues with file paths
+            // containing non-ASCII characters.
+            byte[] b = new byte[s.length()];
+            for (int i = 0; i < s.length(); i++)
+                if (s.charAt(i) > 0xFF) {
+                    return s;
+                } else
+                    b[i] = (byte)s.charAt(i);
+            try{
+                return StandardCharsets.UTF_8.newDecoder()
+                                .onMalformedInput(CodingErrorAction.REPORT)
+                                .onUnmappableCharacter(CodingErrorAction.REPORT)
+                                .decode(ByteBuffer.wrap(b)).toString();
+            }
+            catch (CharacterCodingException e){
+                return s;
+            }
+
+            /*return codecs.PyUnicode_DecodeUTF8(s, null);*/
         }
     }
 

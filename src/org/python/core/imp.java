@@ -2,6 +2,10 @@
 package org.python.core;
 
 import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.CodingErrorAction;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
@@ -766,6 +770,8 @@ public class imp {
         path = path == null ? sys.path : path;
         for (int i = 0; ret == null && i < path.__len__(); i++) {
             PyObject p = path.__getitem__(i);
+            if (p instanceof PyString)
+                p = _decodePath((PyString)p);
             // Is there a path-specific importer?
             PyObject importer = getPathImporter(sys.path_importer_cache, sys.path_hooks, p);
             if (importer != Py.None) {
@@ -784,6 +790,30 @@ public class imp {
         }
 
         return ret;
+    }
+
+    private static PyObject _decodePath(PyString p) {
+        String s = p.string;
+        if (s != null && s.length() > 0) {
+            byte[] b = new byte[s.length()];
+            for (int i = 0; i < s.length(); i++)
+                if (s.charAt(i) > 0xFF) {
+                    return Py.newStringOrUnicode(s);
+                } else
+                    b[i] = (byte)s.charAt(i);
+            try{
+                return Py.newStringOrUnicode(
+                        StandardCharsets.UTF_8.newDecoder()
+                        .onMalformedInput(CodingErrorAction.REPORT)
+                        .onUnmappableCharacter(CodingErrorAction.REPORT)
+                        .decode(ByteBuffer.wrap(b)).toString()
+                );
+            }
+            catch (CharacterCodingException e){
+                return p;
+            }
+        } else
+            return p;
     }
 
     /**
@@ -1426,6 +1456,9 @@ public class imp {
             return Py.fileSystemDecode(p);
         } catch (PyException e) {
             if (e.match(Py.UnicodeDecodeError)) {
+                if (p instanceof PyString) {
+                    return ((PyString)p).string;
+                }
                 // p is bytes we cannot convert to a String using the FS encoding
                 if (raiseImportError) {
                     logger.log(Level.CONFIG, "Cannot decode path entry {0}", p.__repr__());
