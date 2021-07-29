@@ -40,6 +40,7 @@ import org.python.core.adapter.ClassicPyObjectAdapter;
 import org.python.core.adapter.ExtensiblePyObjectAdapter;
 import org.python.core.packagecache.PackageManager;
 import org.python.core.packagecache.SysPackageManager;
+import org.python.core.util.CustomModuleFinder;
 import org.python.expose.ExposedGet;
 import org.python.expose.ExposedType;
 import org.python.modules.Setup;
@@ -157,6 +158,7 @@ public class PySystemState extends PyObject
     public PyList meta_path;
     public PyList path_hooks;
     public PyObject path_importer_cache;
+    public CustomModuleFinder custom_module_finder;
 
     // Only defined if interactive, see https://docs.python.org/2/library/sys.html#sys.ps1
     public PyObject ps1 = PyAttributeDeleted.INSTANCE;

@@ -490,19 +490,19 @@ public class PyString extends PyBaseString implements BufferProtocol {
                     s = hexescape(v, errors, 2, s, str, end, "truncated \\xXX");
                     break;
                 case 'u':
-                    if (!unicode) {
+                    /*if (!unicode) {       // Enable unicode escape sequences in all string literals
                         v.append('\\');
                         v.append('u');
                         break;
-                    }
+                    }*/
                     s = hexescape(v, errors, 4, s, str, end, "truncated \\uXXXX");
                     break;
                 case 'U':
-                    if (!unicode) {
+                    /*if (!unicode) {
                         v.append('\\');
                         v.append('U');
                         break;
-                    }
+                    }*/
                     s = hexescape(v, errors, 8, s, str, end, "truncated \\UXXXXXXXX");
                     break;
                 case 'N':

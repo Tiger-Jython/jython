@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.python.compiler.Module;
+import org.python.core.util.CustomModuleFinder;
 import org.python.core.util.FileUtil;
 import org.python.core.util.PlatformUtil;
 
@@ -765,6 +766,11 @@ public class imp {
         if (ret != null) {
             return ret;
         }
+        // Allow to provide some additional 'custom built-in' modules.
+        ret = loadFromInternalLibrary(name, moduleName);
+        if (ret != null) {
+            return ret;
+        }
 
         // Note the path here may be sys.path or the search path of a Python package.
         path = path == null ? sys.path : path;
@@ -849,6 +855,27 @@ public class imp {
                             "Cannot import " + name + ", missing class " + c.getName());
                 }
             }
+        }
+        return null;
+    }
+
+    private static PyObject loadFromInternalLibrary(String name, String moduleName) {
+        if (name.equals("math") || name.equals("sys") || name.equals("os")) {
+            return null;
+        }
+        PySystemState sys = Py.getSystemState();
+        CustomModuleFinder moduleFinder = sys.custom_module_finder;
+        if (moduleFinder == null)
+            return null;
+        String pathElement = moduleFinder.find_module(name, moduleName);
+        if (pathElement != null) {
+            return loadFromSource(sys, name, moduleName, pathElement);
+        }
+        InputStream inp = moduleFinder.provide_module_code(name, moduleName);
+        if (inp != null) {
+            byte[] bytes = compileSource(name, inp, name);
+            PyCode code = BytecodeLoader.makeCode(name + "$py", bytes, moduleName);
+            return createFromCode(name, code, moduleName);
         }
         return null;
     }

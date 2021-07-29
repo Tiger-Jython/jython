@@ -105,8 +105,8 @@ informix.jar = ../support/jdbc-4.10.12.jar
              specify that suffix by -Dsnapshot.name on the ant command line. -->
         <property name="jython.major_version" value="2"/>
         <property name="jython.minor_version" value="9"/>
-        <property name="jython.micro_version" value="0"/>
-        <property name="jython.release_level" value="${PY_RELEASE_LEVEL_BETA}"/>
+        <property name="jython.micro_version" value="1"/>
+        <property name="jython.release_level" value="${PY_RELEASE_LEVEL_GAMMA}"/>
 
         <!-- Zero at full release: one-up number for alpha, beta and candidate versions. -->
         <property name="jython.release_serial" value="1"/>
