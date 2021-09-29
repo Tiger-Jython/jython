@@ -64,8 +64,8 @@ group = 'org.python'
  * compiling for Java 7 (in v2.7.2) by maintaining compatibility in the code
  * base and in the choice of JARs.
  */
-sourceCompatibility = '1.7' // Make both 1.8 after 2.7.2 released
-targetCompatibility = '1.8'
+sourceCompatibility = "1.8" // Make both 1.8 after 2.7.2 released
+targetCompatibility = "1.8"
 
 project.compileJava.options.debug = true
 

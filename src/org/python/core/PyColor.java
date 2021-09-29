@@ -126,6 +126,10 @@ public class PyColor extends PyObject {
         this(TYPE, new Color(value));
     }
 
+    public PyColor(PyColor value) {
+        this(TYPE, value.color);
+    }
+
     public PyColor(PyType subType, Color color) {
         super(subType);
         this.color = color;
@@ -332,8 +336,16 @@ public class PyColor extends PyObject {
         float[] otherComps = other.color.getRGBColorComponents(null);
         float thisAlpha = getAlpha();
         float otherAlpha = other.getAlpha();
-        for (int i = 0; i < comps.length; i++)
-            comps[i] = Math.min(comps[i] * thisAlpha + otherComps[i] * otherAlpha, 1.0f);
+        float maxComp = 0.0f;
+        for (int i = 0; i < comps.length; i++) {
+            comps[i] = (comps[i] * thisAlpha + otherComps[i] * otherAlpha);
+            if (comps[i] > maxComp)
+                maxComp = comps[i];
+        }
+        if (maxComp > 1.0f) {
+            for (int i = 0; i < comps.length; i++)
+                comps[i] = comps[i] / maxComp;
+        }
         return new PyColor(new Color(comps[0], comps[1], comps[2], (thisAlpha + otherAlpha) / 2f));
     }
 
